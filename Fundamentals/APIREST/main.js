@@ -7,4 +7,4 @@ async function getNewCat() {
     const img = document.querySelector('img');
     img.src = data[0].url;
 } 
-document.onload = getNewCat();
+document.addEventListener('DOMContentLoaded', getNewCat);
