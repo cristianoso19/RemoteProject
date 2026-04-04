@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>HTTP &mdash; Study Guide</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="http--study-guide">HTTP — Study Guide</h1>
+<hr>
+<h2 id="1-what-is-http">1. What is HTTP?</h2>
+<p><strong>HTTP</strong> (HyperText Transfer Protocol) is a communication protocol that defines how a <strong>client</strong> and a <strong>server</strong> exchange information over the internet.</p>
+<pre><code>Client  ──── Request ────►  Server
+Client  ◄─── Response ────  Server
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HTTP</strong></td>
+<td>Standard protocol for data transfer (port <strong>80</strong>)</td>
+</tr>
+<tr>
+<td><strong>HTTPS</strong></td>
+<td>HTTP with encrypted communication via TLS/SSL (port <strong>443</strong>)</td>
+</tr>
+<tr>
+<td><strong>DNS</strong></td>
+<td>Translates a domain name (e.g. <code>google.com</code>) into an IP address (e.g. <code>142.250.0.1</code>)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> HTTPS is HTTP + encryption. Always prefer HTTPS in production to protect data in transit.</p>
+</blockquote>
+<hr>
+<h2 id="2-client-server-and-apis">2. Client, Server, and APIs</h2>
+<ul>
+<li><strong>Client</strong> — the one who makes a <strong>Request</strong> (browser, mobile app, CLI tool).</li>
+<li><strong>Server / Backend</strong> — the one who processes the request and sends a <strong>Response</strong>.</li>
+<li><strong>API</strong> (Application Programming Interface) — an interface exposed by the server that the client can call to get or send data.</li>
+</ul>
+<pre><code>Browser (Client)
+    │
+    │  GET /users HTTP/1.1
+    │  Host: api.example.com
+    ▼
+API Server (Backend)
+    │
+    │  HTTP/1.1 200 OK
+    │  { &quot;users&quot;: [...] }
+    ▼
+Browser receives data
+</code></pre>
+<h3 id="ssr-vs-csr">SSR vs CSR</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>SSR (Server-Side Rendering)</th>
+<th>CSR (Client-Side Rendering)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Where HTML is built</strong></td>
+<td>On the server</td>
+<td>In the browser</td>
+</tr>
+<tr>
+<td><strong>Examples</strong></td>
+<td>Next.js, Django templates</td>
+<td>React, Vue, Angular</td>
+</tr>
+<tr>
+<td><strong>First load</strong></td>
+<td>Faster (HTML arrives ready)</td>
+<td>Slower (JS downloads first)</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="3-http-methods-verbs">3. HTTP Methods (Verbs)</h2>
+<p>HTTP methods define the <strong>intention</strong> of a request.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Purpose</th>
+<th>Has Body?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td>Retrieve information</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td>Create a new resource</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>PUT</code></td>
+<td>Replace an entire resource</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>PATCH</code></td>
+<td>Update part of a resource</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td>Delete a resource</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples">Examples</h3>
+<pre><code class="language-http"># Get all users
+<span class="hljs-keyword">GET</span> <span class="hljs-string">/users</span> <span class="hljs-meta">HTTP/1.1</span>
+<span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>api.example.com
+
+<span class="language-pgsql"># <span class="hljs-keyword">Create</span> a <span class="hljs-built_in">new</span> <span class="hljs-keyword">user</span>
+POST /users HTTP/<span class="hljs-number">1.1</span>
+Host: api.example.com
+Content-<span class="hljs-keyword">Type</span>: application/<span class="hljs-type">json</span>
+
+{
+  &quot;name&quot;: &quot;John Doe&quot;,
+  &quot;email&quot;: &quot;john@example.com&quot;
+}
+
+# <span class="hljs-keyword">Update</span> <span class="hljs-keyword">only</span> the email <span class="hljs-keyword">of</span> <span class="hljs-keyword">user</span> <span class="hljs-number">42</span>
+PATCH /users/<span class="hljs-number">42</span> HTTP/<span class="hljs-number">1.1</span>
+Content-<span class="hljs-keyword">Type</span>: application/<span class="hljs-type">json</span>
+
+{
+  &quot;email&quot;: &quot;newemail@example.com&quot;
+}
+
+# <span class="hljs-keyword">Delete</span> <span class="hljs-keyword">user</span> <span class="hljs-number">42</span>
+<span class="hljs-keyword">DELETE</span> /users/<span class="hljs-number">42</span> HTTP/<span class="hljs-number">1.1</span>
+</span></code></pre>
+<hr>
+<h2 id="4-how-to-send-information-in-http">4. How to Send Information in HTTP</h2>
+<p>There are four ways to pass data in an HTTP request:</p>
+<h3 id="41-url--path-parameters">4.1 URL / Path Parameters</h3>
+<p>Used to <strong>identify a specific resource</strong>. They are part of the URL path.</p>
+<pre><code>GET /users/42
+              ▲
+              └── path param: userId = 42
+</code></pre>
+<pre><code>GET /products/electronics/keyboards
+              ▲           ▲
+              category    subcategory
+</code></pre>
+<h3 id="42-query-parameters">4.2 Query Parameters</h3>
+<p>Used to <strong>filter, sort, or paginate</strong> results. They start after <code>?</code> and are separated by <code>&amp;</code>.</p>
+<pre><code>GET /users?status=active&amp;role=admin&amp;page=2
+           ▲              ▲          ▲
+           filter         filter     pagination
+</code></pre>
+<blockquote>
+<p>Query parameters are always <strong>optional</strong> by convention. They should never carry required data.</p>
+</blockquote>
+<h3 id="43-headers">4.3 Headers</h3>
+<p>Used to send <strong>metadata</strong> about the request: authentication tokens, content type, language, etc.</p>
+<pre><code class="language-http"><span class="hljs-keyword">GET</span> <span class="hljs-string">/users</span> <span class="hljs-meta">HTTP/1.1</span>
+<span class="hljs-attribute">Host</span><span class="hljs-punctuation">: </span>api.example.com
+<span class="hljs-attribute">Authorization</span><span class="hljs-punctuation">: </span>Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+<span class="hljs-attribute">Content-Type</span><span class="hljs-punctuation">: </span>application/json
+<span class="hljs-attribute">Accept-Language</span><span class="hljs-punctuation">: </span>en-US
+</code></pre>
+<p>Common headers:</p>
+<table>
+<thead>
+<tr>
+<th>Header</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Authorization</code></td>
+<td>Send authentication token (JWT, API key)</td>
+</tr>
+<tr>
+<td><code>Content-Type</code></td>
+<td>Tell the server the format of the body</td>
+</tr>
+<tr>
+<td><code>Accept</code></td>
+<td>Tell the server what format you expect</td>
+</tr>
+<tr>
+<td><code>Cookie</code></td>
+<td>Send session data</td>
+</tr>
+</tbody>
+</table>
+<h3 id="44-body--payload">4.4 Body / Payload</h3>
+<p>Used to <strong>send data</strong> when creating or updating resources. Most common format: <strong>JSON</strong>.</p>
+<pre><code class="language-http"><span class="hljs-keyword">POST</span> <span class="hljs-string">/users</span> <span class="hljs-meta">HTTP/1.1</span>
+<span class="hljs-attribute">Content-Type</span><span class="hljs-punctuation">: </span>application/json
+
+<span class="language-perl">{
+  <span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;Maria Garcia&quot;</span>,
+  <span class="hljs-string">&quot;email&quot;</span>: <span class="hljs-string">&quot;maria@example.com&quot;</span>,
+  <span class="hljs-string">&quot;age&quot;</span>: <span class="hljs-number">28</span>
+}
+</span></code></pre>
+<blockquote>
+<p><code>GET</code> and <code>DELETE</code> requests do <strong>not</strong> have a body.</p>
+</blockquote>
+<hr>
+<h2 id="5-rest-api-and-crud">5. REST API and CRUD</h2>
+<p><strong>REST</strong> (Representational State Transfer) is an architectural style for designing APIs.</p>
+<p>Key rule: <strong>use resources (nouns), not actions (verbs)</strong> in your URLs.</p>
+<table>
+<thead>
+<tr>
+<th>Wrong (action-based)</th>
+<th>Correct (resource-based)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /createUser</code></td>
+<td><code>POST /users</code></td>
+</tr>
+<tr>
+<td><code>GET /getUser/5</code></td>
+<td><code>GET /users/5</code></td>
+</tr>
+<tr>
+<td><code>POST /deleteUser/5</code></td>
+<td><code>DELETE /users/5</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="crud--http-mapping">CRUD → HTTP mapping</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>HTTP Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create</td>
+<td><code>POST</code></td>
+<td><code>/users</code></td>
+<td>Create a new user</td>
+</tr>
+<tr>
+<td>Read all</td>
+<td><code>GET</code></td>
+<td><code>/users</code></td>
+<td>Get list of users</td>
+</tr>
+<tr>
+<td>Read one</td>
+<td><code>GET</code></td>
+<td><code>/users/{id}</code></td>
+<td>Get a single user by id</td>
+</tr>
+<tr>
+<td>Update</td>
+<td><code>PUT</code></td>
+<td><code>/users/{id}</code></td>
+<td>Replace user data</td>
+</tr>
+<tr>
+<td>Partial</td>
+<td><code>PATCH</code></td>
+<td><code>/users/{id}</code></td>
+<td>Update specific fields</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td><code>DELETE</code></td>
+<td><code>/users/{id}</code></td>
+<td>Delete a user</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-api-design">Example API Design</h3>
+<pre><code>POST   /products              → create product
+GET    /products              → list all products
+GET    /products/7            → get product with id=7
+GET    /products?category=books&amp;page=1  → filter + paginate
+PUT    /products/7            → replace product 7
+PATCH  /products/7            → partially update product 7
+DELETE /products/7            → delete product 7
+</code></pre>
+<hr>
+<h2 id="6-http-status-codes">6. HTTP Status Codes</h2>
+<p>The server uses status codes to tell the client <strong>what happened</strong> with the request.</p>
+<h3 id="2xx--success">2xx — Success</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>200</code></td>
+<td>OK</td>
+<td>Successful GET, PUT, PATCH, DELETE</td>
+</tr>
+<tr>
+<td><code>201</code></td>
+<td>Created</td>
+<td>Successful POST (resource created)</td>
+</tr>
+<tr>
+<td><code>204</code></td>
+<td>No Content</td>
+<td>Success but no body to return</td>
+</tr>
+</tbody>
+</table>
+<h3 id="4xx--client-errors">4xx — Client Errors</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>400</code></td>
+<td>Bad Request</td>
+<td>Malformed request, invalid data</td>
+</tr>
+<tr>
+<td><code>401</code></td>
+<td>Unauthorized</td>
+<td>Not authenticated (no token or invalid)</td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Forbidden</td>
+<td>Authenticated but no permission</td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Not Found</td>
+<td>Resource does not exist</td>
+</tr>
+<tr>
+<td><code>422</code></td>
+<td>Unprocessable</td>
+<td>Validation error on the request body</td>
+</tr>
+</tbody>
+</table>
+<h3 id="5xx--server-errors">5xx — Server Errors</h3>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>500</code></td>
+<td>Internal Server Error</td>
+<td>Unexpected crash on the server</td>
+</tr>
+<tr>
+<td><code>502</code></td>
+<td>Bad Gateway</td>
+<td>Server got invalid response upstream</td>
+</tr>
+<tr>
+<td><code>503</code></td>
+<td>Service Unavailable</td>
+<td>Server is down or overloaded</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>401 vs 403:</strong> <code>401</code> means &quot;who are you?&quot; (not logged in). <code>403</code> means &quot;I know who you are, but you can't do this.&quot;</p>
+</blockquote>
+<hr>
+<h2 id="7-tools-to-make-http-requests">7. Tools to Make HTTP Requests</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Type</th>
+<th>Language / Platform</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fetch</code></td>
+<td>Built-in</td>
+<td>JavaScript (browser/Node)</td>
+</tr>
+<tr>
+<td><code>axios</code></td>
+<td>Library</td>
+<td>JavaScript / TypeScript</td>
+</tr>
+<tr>
+<td><code>requests</code></td>
+<td>Library</td>
+<td>Python</td>
+</tr>
+<tr>
+<td><code>curl</code></td>
+<td>CLI</td>
+<td>Terminal (any OS)</td>
+</tr>
+<tr>
+<td>Postman</td>
+<td>GUI app</td>
+<td>Testing &amp; documentation</td>
+</tr>
+<tr>
+<td>Swagger/OpenAPI</td>
+<td>Documentation</td>
+<td>Describes API endpoints</td>
+</tr>
+</tbody>
+</table>
+<h3 id="examples-1">Examples</h3>
+<p><strong>JavaScript — fetch</strong></p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;https://api.example.com/users/5&#x27;</span>);
+<span class="hljs-keyword">const</span> user = <span class="hljs-keyword">await</span> response.<span class="hljs-title function_">json</span>();
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(user);
+</code></pre>
+<p><strong>JavaScript — axios</strong></p>
+<pre><code class="language-js"><span class="hljs-keyword">const</span> { data } = <span class="hljs-keyword">await</span> axios.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/users&#x27;</span>, {
+  <span class="hljs-attr">params</span>: { <span class="hljs-attr">status</span>: <span class="hljs-string">&#x27;active&#x27;</span> },
+  <span class="hljs-attr">headers</span>: { <span class="hljs-title class_">Authorization</span>: <span class="hljs-string">`Bearer <span class="hljs-subst">${token}</span>`</span> }
+});
+</code></pre>
+<p><strong>Python — requests</strong></p>
+<pre><code class="language-python"><span class="hljs-keyword">import</span> requests
+
+response = requests.get(
+    <span class="hljs-string">&#x27;https://api.example.com/users&#x27;</span>,
+    params={<span class="hljs-string">&#x27;status&#x27;</span>: <span class="hljs-string">&#x27;active&#x27;</span>},
+    headers={<span class="hljs-string">&#x27;Authorization&#x27;</span>: <span class="hljs-string">&#x27;Bearer mytoken&#x27;</span>}
+)
+<span class="hljs-built_in">print</span>(response.json())
+</code></pre>
+<p><strong>curl — terminal</strong></p>
+<pre><code class="language-bash"><span class="hljs-comment"># GET</span>
+curl https://api.example.com/users
+
+<span class="hljs-comment"># POST with JSON body</span>
+curl -X POST https://api.example.com/users \
+  -H <span class="hljs-string">&quot;Content-Type: application/json&quot;</span> \
+  -d <span class="hljs-string">&#x27;{&quot;name&quot;: &quot;Alice&quot;, &quot;email&quot;: &quot;alice@example.com&quot;}&#x27;</span>
+
+<span class="hljs-comment"># With auth token</span>
+curl https://api.example.com/users \
+  -H <span class="hljs-string">&quot;Authorization: Bearer mytoken123&quot;</span>
+</code></pre>
+<hr>
+<h2 id="8-reading-api-documentation">8. Reading API Documentation</h2>
+<p>Good API documentation always specifies:</p>
+<ol>
+<li><strong>Method</strong> — <code>GET</code>, <code>POST</code>, etc.</li>
+<li><strong>URL / Endpoint</strong> — <code>/users/{id}</code></li>
+<li><strong>Path parameters</strong> — required, part of the URL</li>
+<li><strong>Query parameters</strong> — optional, after <code>?</code></li>
+<li><strong>Request body</strong> — schema and required fields</li>
+<li><strong>Response</strong> — status code and example body</li>
+<li><strong>Authentication</strong> — how to send credentials</li>
+</ol>
+<h3 id="example-documentation-entry">Example documentation entry</h3>
+<pre><code>GET /users/{userId}/orders
+
+Path parameters:
+  userId (required) — integer — ID of the user
+
+Query parameters:
+  status  (optional) — string  — Filter by order status: &quot;pending&quot; | &quot;shipped&quot; | &quot;delivered&quot;
+  page    (optional) — integer — Page number, default: 1
+  limit   (optional) — integer — Items per page, default: 20
+
+Headers:
+  Authorization: Bearer &lt;token&gt;  (required)
+
+Response 200:
+{
+  &quot;orders&quot;: [
+    { &quot;id&quot;: 1, &quot;status&quot;: &quot;shipped&quot;, &quot;total&quot;: 59.99 }
+  ],
+  &quot;page&quot;: 1,
+  &quot;total&quot;: 42
+}
+
+Response 404:
+{ &quot;error&quot;: &quot;User not found&quot; }
+</code></pre>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>
